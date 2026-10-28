@@ -32,7 +32,7 @@ function simplifyLanding(){
     #auth-panel form{margin:0}
     #auth-panel .auth-actions-bottom{display:grid;grid-template-columns:1fr;gap:10px;margin:16px 0 0}
     #auth-panel .auth-actions-bottom .tab{width:100%;padding:12px 16px;font-weight:750;cursor:pointer}
-    #auth-panel #show-login{display:block}
+    #auth-panel #show-login{display:none}
     #auth-panel #show-signup{display:block}
     #auth-panel #show-reset{display:block}
     @media(min-width:560px){#auth-panel{margin-top:58px}}
