@@ -1,6 +1,7 @@
 import './premium-features.js'
 import './financial-coach.js'
 import './spending-insights.js'
+import './dashboard-home.js'
 import './dashboard-pages.js'
 
 function simplifyLanding(){
