@@ -20,12 +20,21 @@ async function load(){
  channel=supabase.channel(`overview-balance-${user.id}`).on('postgres_changes',{event:'*',schema:'public',table:'entries',filter:`user_id=eq.${user.id}`},()=>load()).subscribe()
 }
 
+function featureCard(title,items,kind){
+ const card=document.createElement('article');card.className='card overview-feature-card';card.dataset.overviewFeature=kind
+ card.innerHTML=`<span class="eyebrow">${title}</span><h2>${title}</h2><div class="overview-feature-list">${items.map(item=>`<button type="button" class="overview-feature-item" data-feature="${item}"><span>${item}</span><small>${kind==='money'?'Not Yet Available':'Provider connection required'}</small></button>`).join('')}</div>`
+ return card
+}
+
 function mountDashboardHome(){
  const dashboard=document.querySelector('#dashboard');if(!dashboard||document.querySelector('#dashboard-home-card'))return
  const card=document.createElement('article');card.id='dashboard-home-card';card.className='card'
  card.innerHTML=`<span class="eyebrow">Overview</span><h2>Balance</h2><div class="overview-balance"><div class="overview-balance-main"><span>Current recorded balance</span><strong id="overview-balance-value">$0.00</strong></div><div class="overview-balance-stats"><div><span>Income</span><strong id="overview-income-value">$0.00</strong></div><div><span>Expenses</span><strong id="overview-expense-value">$0.00</strong></div></div></div>`
  const first=dashboard.querySelector('.pay-hub');if(first)first.insertAdjacentElement('beforebegin',card);else dashboard.prepend(card)
- const style=document.createElement('style');style.textContent=`.overview-balance{display:grid;gap:16px;margin-top:20px}.overview-balance-main{padding:24px;border:1px solid #dde7df;border-radius:18px;background:#f7faf7}.overview-balance-main span,.overview-balance-stats span{display:block;color:#66756c;font-size:.85rem;margin-bottom:7px}.overview-balance-main strong{display:block;font-size:2.35rem;line-height:1.1}.overview-balance-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px}.overview-balance-stats>div{padding:16px;border:1px solid #e2e8e3;border-radius:14px}.overview-balance-stats strong{font-size:1.15rem}@media(max-width:600px){.overview-balance-stats{grid-template-columns:1fr}.overview-balance-main strong{font-size:2rem}}`;document.head.append(style)
+ const moneyCard=featureCard('Money',['USD wallet','Transfers','Payments','Add/withdraw money','Transaction history'],'money')
+ const investCard=featureCard('Invest',['Brokerage account','Stocks','ETFs','Fractional shares','Buy/Sell','Portfolio','Watchlist','Market data','Dividends','Investment transaction history'],'invest')
+ card.insertAdjacentElement('afterend',moneyCard);moneyCard.insertAdjacentElement('afterend',investCard)
+ const style=document.createElement('style');style.textContent=`.overview-balance{display:grid;gap:16px;margin-top:20px}.overview-balance-main{padding:24px;border:1px solid #dde7df;border-radius:18px;background:#f7faf7}.overview-balance-main span,.overview-balance-stats span{display:block;color:#66756c;font-size:.85rem;margin-bottom:7px}.overview-balance-main strong{display:block;font-size:2.35rem;line-height:1.1}.overview-balance-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px}.overview-balance-stats>div{padding:16px;border:1px solid #e2e8e3;border-radius:14px}.overview-balance-stats strong{font-size:1.15rem}.overview-feature-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:16px}.overview-feature-item{border:1px solid #e2e8e3;border-radius:14px;background:#fff;text-align:left;padding:14px;font:inherit;cursor:default}.overview-feature-item span{display:block;font-weight:750;color:#1d2421}.overview-feature-item small{display:block;margin-top:5px;color:#78847d;font-size:.75rem}@media(max-width:600px){.overview-balance-stats,.overview-feature-list{grid-template-columns:1fr}.overview-balance-main strong{font-size:2rem}}`;document.head.append(style)
  load()
 }
 
