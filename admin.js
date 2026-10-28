@@ -1,10 +1,14 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.102.0'
 const supabase=createClient('https://vrgimzvmdwwrstonrbcf.supabase.co','sb_publishable_8ex4YVbGREfk93IGLBMG-g_hyZZRmLl',{auth:{autoRefreshToken:true,persistSession:true,detectSessionInUrl:true}})
 const $=s=>document.querySelector(s),login=$('#admin-login'),panel=$('#admin-panel'),form=$('#admin-form'),message=$('#message')
-function msg(text,error=false){message.textContent=text;message.className='message '+(error?'error':'success')}
+function msg(text,error=false,target=message){target.textContent=text;target.className='message '+(error?'error':'success')}
 async function verifiedUser(){const {data,error}=await supabase.auth.getUser();return error?null:data.user}
 function isAdmin(u){return u?.app_metadata?.role==='admin'}
-async function render(){const u=await verifiedUser();if(u&&isAdmin(u)){login.hidden=true;panel.hidden=false;$('#admin-email').textContent=u.email||'';return}panel.hidden=true;login.hidden=false;if(u&&!isAdmin(u)){await supabase.auth.signOut({scope:'local'});msg('This account does not have administrator access.',true)}}
+function fmt(v){if(!v)return '—';const d=new Date(v);return Number.isNaN(d.valueOf())?'—':d.toLocaleString()}
+function esc(v=''){return String(v).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+async function loadUsers(){const body=$('#users-body'),notice=$('#users-message');if(!body)return;body.innerHTML='<tr><td colspan="5" class="empty">Loading users…</td></tr>';msg('',false,notice);const {data,error}=await supabase.functions.invoke('admin-api',{body:{action:'list-users'}});if(error||!data?.users){body.innerHTML='<tr><td colspan="5" class="empty">Unable to load users.</td></tr>';return msg('The protected admin API could not load the user directory.',true,notice)}if(!data.users.length){body.innerHTML='<tr><td colspan="5" class="empty">No users found.</td></tr>';return}body.innerHTML=data.users.map(u=>`<tr><td><strong>${esc(u.name||u.email||'User')}</strong><br><span class="muted">${esc(u.email)}</span></td><td><span class="pill ${u.role==='admin'?'admin-pill':''}">${esc(u.role)}</span></td><td>${u.confirmed_at?'Yes':'No'}</td><td>${esc(fmt(u.created_at))}</td><td>${esc(fmt(u.last_sign_in_at))}</td></tr>`).join('')}
+async function render(){const u=await verifiedUser();if(u&&isAdmin(u)){login.hidden=true;panel.hidden=false;$('#admin-email').textContent=u.email||'';await loadUsers();return}panel.hidden=true;login.hidden=false;if(u&&!isAdmin(u)){await supabase.auth.signOut({scope:'local'});msg('This account does not have administrator access.',true)}}
 form.onsubmit=async e=>{e.preventDefault();msg('');const {error}=await supabase.auth.signInWithPassword({email:form.email.value.trim(),password:form.password.value});if(error)return msg('Unable to sign in with those credentials.',true);const u=await verifiedUser();if(!isAdmin(u)){await supabase.auth.signOut({scope:'local'});return msg('This account does not have administrator access.',true)}await render()}
+$('#refresh-users').onclick=loadUsers
 $('#sign-out').onclick=async()=>{await supabase.auth.signOut({scope:'local'});panel.hidden=true;login.hidden=false;form.reset();msg('Signed out.')}
 supabase.auth.onAuthStateChange(()=>setTimeout(render,0));render()
