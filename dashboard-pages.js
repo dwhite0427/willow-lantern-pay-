@@ -6,9 +6,10 @@ const PAGE_GROUPS={
   bills:['#bill-form','#bill-items','#reminder-card','#bill-payment-history-items'],
   shared:['#split-form','#split-items'],
   education:['#education-center-card'],
-  profile:['#profile-center-card','#profile-form']
+  profile:['#profile-center-card','#profile-form'],
+  account:['#account-settings-card']
 }
-const TITLES={overview:'Overview',entries:'Income & Expenses',budgets:'Budgets',savings:'Savings Goals',bills:'Bills',shared:'Shared Expenses',education:'Financial Education',profile:'Profile'}
+const TITLES={overview:'Overview',entries:'Income & Expenses',budgets:'Budgets',savings:'Savings Goals',bills:'Bills',shared:'Shared Expenses',education:'Financial Education',profile:'Profile',account:'Account & Security'}
 const PAGE_KEY='willow-current-page'
 
 function cardFor(selector){const el=document.querySelector(selector);if(!el)return null;if(el.matches('article.card,.card,.pay-hub,.summary'))return el;return el.closest('article.card,.card')||el}
@@ -30,7 +31,7 @@ function showPage(name='overview',options={}){
 
 function wireMenu(){
   const menu=document.querySelector('#dashboard-menu');if(!menu)return
-  const map=[['Overview','overview'],['Profile','profile'],['Income & Expenses','entries'],['Budgets','budgets'],['Savings Goals','savings'],['Bills','bills'],['Shared Expenses','shared'],['Financial Education','education']]
+  const map=[['Overview','overview'],['Profile','profile'],['Account & Security','account'],['Income & Expenses','entries'],['Budgets','budgets'],['Savings Goals','savings'],['Bills','bills'],['Shared Expenses','shared'],['Financial Education','education']]
   for(const [label,page] of map){const b=[...menu.querySelectorAll('.dashboard-menu-item')].find(x=>x.textContent.trim()===label);if(b)b.onclick=()=>{showPage(page);menu.hidden=true;document.querySelector('#dashboard-menu-button')?.setAttribute('aria-expanded','false')}}
 }
 
