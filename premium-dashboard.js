@@ -40,6 +40,72 @@ function simplifyLanding(){
   if(!document.querySelector('#landing-layout-style'))document.head.append(style)
 }
 
+function mountDashboardMenu(){
+  const dashboard=document.querySelector('#dashboard')
+  if(!dashboard||document.querySelector('#dashboard-menu-button'))return
+
+  const button=document.createElement('button')
+  button.id='dashboard-menu-button'
+  button.type='button'
+  button.setAttribute('aria-label','Open dashboard menu')
+  button.setAttribute('aria-expanded','false')
+  button.innerHTML='<span></span><span></span><span></span>'
+
+  const menu=document.createElement('nav')
+  menu.id='dashboard-menu'
+  menu.setAttribute('aria-label','Dashboard sections')
+  menu.hidden=true
+
+  const sections=[
+    ['Overview','#dashboard'],
+    ['Income & Expenses','#entry-form'],
+    ['Budgets','#budget-form'],
+    ['Savings Goals','#goal-form'],
+    ['Bills','#bill-form'],
+    ['Shared Expenses','#split-form'],
+    ['Profile','#profile-form']
+  ]
+  for(const [label,selector] of sections){
+    const target=document.querySelector(selector)
+    if(!target)continue
+    const link=document.createElement('button')
+    link.type='button'
+    link.className='dashboard-menu-item'
+    link.textContent=label
+    link.onclick=()=>{target.scrollIntoView({behavior:'smooth',block:'start'});menu.hidden=true;button.setAttribute('aria-expanded','false')}
+    menu.append(link)
+  }
+
+  const signOut=document.querySelector('#sign-out')
+  if(signOut){
+    const logout=document.createElement('button')
+    logout.type='button';logout.className='dashboard-menu-item dashboard-menu-signout';logout.textContent='Sign out'
+    logout.onclick=()=>{menu.hidden=true;button.setAttribute('aria-expanded','false');signOut.click()}
+    menu.append(logout)
+  }
+
+  button.onclick=e=>{e.stopPropagation();menu.hidden=!menu.hidden;button.setAttribute('aria-expanded',String(!menu.hidden))}
+  menu.onclick=e=>e.stopPropagation()
+  document.addEventListener('click',()=>{if(!menu.hidden){menu.hidden=true;button.setAttribute('aria-expanded','false')}})
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'){menu.hidden=true;button.setAttribute('aria-expanded','false')}})
+  document.body.append(button,menu)
+
+  const style=document.createElement('style')
+  style.id='dashboard-menu-style'
+  style.textContent=`
+    #dashboard-menu-button{position:fixed;top:18px;left:18px;z-index:1001;width:46px;height:46px;border:1px solid rgba(0,0,0,.12);border-radius:12px;background:#fff;box-shadow:0 8px 24px rgba(0,0,0,.12);display:none;align-items:center;justify-content:center;flex-direction:column;gap:5px;cursor:pointer}
+    #dashboard-menu-button span{display:block;width:22px;height:2px;background:#1d2421;border-radius:2px}
+    #dashboard-menu{position:fixed;top:72px;left:18px;z-index:1000;width:min(290px,calc(100vw - 36px));padding:10px;background:#fff;border:1px solid rgba(0,0,0,.1);border-radius:16px;box-shadow:0 18px 45px rgba(0,0,0,.16)}
+    #dashboard-menu[hidden]{display:none}
+    .dashboard-menu-item{display:block;width:100%;border:0;background:transparent;text-align:left;padding:12px 14px;border-radius:10px;font:inherit;font-weight:700;cursor:pointer;color:#1d2421}
+    .dashboard-menu-item:hover,.dashboard-menu-item:focus{background:rgba(0,0,0,.055);outline:none}
+    .dashboard-menu-signout{margin-top:6px;border-top:1px solid rgba(0,0,0,.08);border-radius:0 0 10px 10px}
+    body:has(#dashboard:not([hidden])) #dashboard-menu-button{display:flex}
+    body:has(#auth-panel:not([hidden])) #dashboard-menu-button,body:has(#auth-panel:not([hidden])) #dashboard-menu{display:none}
+  `
+  document.head.append(style)
+}
+
 function mountPremiumInsights(){
   const dashboard=document.querySelector('#dashboard')
   if(!dashboard||document.querySelector('#premium-insights-card'))return
@@ -52,5 +118,5 @@ function mountPremiumInsights(){
   import('./premium-insights.js')
 }
 
-function mount(){simplifyLanding();mountPremiumInsights()}
+function mount(){simplifyLanding();mountDashboardMenu();mountPremiumInsights()}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount()
