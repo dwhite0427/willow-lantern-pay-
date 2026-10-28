@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Willow Lantern Pay — Premium Test</title>
+  <style>
+    :root{font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;color:#17231c;background:#f5f8f5}*{box-sizing:border-box}body{margin:0}.wrap{max-width:680px;margin:auto;padding:24px}.card{background:#fff;border:1px solid #dde7df;border-radius:20px;padding:24px;margin-top:32px}.eyebrow{font-size:.78rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase}.muted{color:#5a6b61}.btn{padding:12px 18px;border:0;border-radius:999px;background:#17231c;color:#fff;font-weight:750;cursor:pointer}.btn:disabled{opacity:.45}.message{padding:11px;border-radius:10px;margin-top:12px}.message:empty{display:none}.error{background:#fff0f0;color:#8b2525}.notice{background:#fff3dc;border-radius:14px;padding:14px;margin:16px 0}.price{font-size:2rem;font-weight:850;margin:8px 0}a{color:#17231c}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <article class="card">
+      <div class="eyebrow">Stripe test mode only</div>
+      <h1>Willow Lantern Pay Premium TEST</h1>
+      <div class="price">$4.99 <small>/ month</small></div>
+      <div class="notice"><strong>No real charge.</strong> This isolated page calls the test-only checkout function and does not replace the live Premium checkout.</div>
+      <p class="muted">Sign in to Willow Lantern Pay in this browser first, then use the button below to open Stripe test Checkout.</p>
+      <button id="test-checkout" class="btn" type="button">Open Test Checkout</button>
+      <div id="message" class="message"></div>
+      <p><a href="/">Return to Willow Lantern Pay</a></p>
+    </article>
+  </main>
+  <script type="module">
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.102.0'
+    const supabase=createClient('https://vrgimzvmdwwrstonrbcf.supabase.co','sb_publishable_8ex4YVbGREfk93IGLBMG-g_hyZZRmLl',{auth:{autoRefreshToken:true,persistSession:true,detectSessionInUrl:true}})
+    const button=document.querySelector('#test-checkout'),message=document.querySelector('#message')
+    const show=(text,error=false)=>{message.textContent=text;message.className='message '+(error?'error':'')}
+    button.onclick=async()=>{
+      button.disabled=true;button.textContent='Opening test checkout…';show('')
+      try{
+        const {data:{session}}=await supabase.auth.getSession()
+        if(!session?.access_token)throw new Error('Please sign in to Willow Lantern Pay first, then return to this test page.')
+        const response=await fetch('https://vrgimzvmdwwrstonrbcf.supabase.co/functions/v1/create-test-checkout-session',{method:'POST',headers:{Authorization:`Bearer ${session.access_token}`,'Content-Type':'application/json'}})
+        let payload={};try{payload=await response.json()}catch{}
+        if(!response.ok||!payload.url)throw new Error(payload.error||'Test checkout is currently unavailable.')
+        location.assign(payload.url)
+      }catch(error){show(error?.message||'Test checkout is currently unavailable.',true);button.disabled=false;button.textContent='Open Test Checkout'}
+    }
+  </script>
+</body>
+</html>
