@@ -2,6 +2,38 @@ import './premium-features.js'
 import './financial-coach.js'
 import './spending-insights.js'
 
+function simplifyLanding(){
+  const hero=document.querySelector('.hero')
+  if(hero)hero.remove()
+
+  const auth=document.querySelector('#auth-panel')
+  if(!auth)return
+
+  const heading=auth.querySelector('h2')
+  if(heading)heading.textContent='Willow Lantern Pay'
+
+  const tabs=auth.querySelector('.tabs')
+  const message=document.querySelector('#auth-message')
+  if(tabs){
+    tabs.classList.add('auth-actions-bottom')
+    if(message)auth.insertBefore(tabs,message)
+    else auth.append(tabs)
+  }
+
+  const style=document.createElement('style')
+  style.id='landing-layout-style'
+  style.textContent=`
+    #auth-panel{margin:34px auto 40px;max-width:520px}
+    #auth-panel>h2{text-align:center;font-size:2rem;margin:0 0 22px}
+    #auth-panel .auth-actions-bottom{display:grid;grid-template-columns:1fr;gap:9px;margin:14px 0 0}
+    #auth-panel .auth-actions-bottom .tab{width:100%;padding:11px 16px;font-weight:750;cursor:pointer}
+    #auth-panel #show-login{display:none}
+    #auth-panel form:not([hidden])~.auth-actions-bottom #show-login{display:block}
+    @media(min-width:560px){#auth-panel{margin-top:48px}}
+  `
+  if(!document.querySelector('#landing-layout-style'))document.head.append(style)
+}
+
 function mountPremiumInsights(){
   const dashboard=document.querySelector('#dashboard')
   if(!dashboard||document.querySelector('#premium-insights-card'))return
@@ -14,4 +46,5 @@ function mountPremiumInsights(){
   import('./premium-insights.js')
 }
 
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mountPremiumInsights,{once:true});else mountPremiumInsights()
+function mount(){simplifyLanding();mountPremiumInsights()}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount()
