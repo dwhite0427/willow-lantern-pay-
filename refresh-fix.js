@@ -1,36 +1,61 @@
 // Refresh/session stability for Willow Lantern Pay.
-// app.js owns authentication; this module only prevents stale/login UI from flashing
-// while Supabase restores the persisted session.
+// Restore the persisted Supabase session directly on page load so an iPhone/Safari
+// refresh cannot expose the static login screen while app.js is still resolving auth.
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.102.0'
+
+const supabase=createClient('https://vrgimzvmdwwrstonrbcf.supabase.co','sb_publishable_8ex4YVbGREfk93IGLBMG-g_hyZZRmLl',{auth:{autoRefreshToken:true,persistSession:true,detectSessionInUrl:true}})
 const style=document.createElement('style')
 style.id='refresh-stability-style'
 style.textContent=`html.willow-auth-loading #auth-panel{display:none!important}html.willow-auth-loading #dashboard{visibility:hidden!important}html.willow-auth-loading #dashboard-menu-button{display:none!important}`
 document.head.append(style)
 document.documentElement.classList.add('willow-auth-loading')
 
-let authResolved=false
-const reveal=()=>{authResolved=true;document.documentElement.classList.remove('willow-auth-loading')}
+const auth=document.querySelector('#auth-panel')
+const dashboard=document.querySelector('#dashboard')
+const signOut=document.querySelector('#sign-out')
+let resolved=false
 
-// Do not use the initial hidden attributes as proof that auth has resolved: those
-// attributes come from the static HTML and caused the previous refresh race.
-window.addEventListener('willow-auth-resolved',reveal,{once:true})
+function applySession(session){
+ const signedIn=!!session?.user
+ if(auth)auth.hidden=signedIn
+ if(dashboard)dashboard.hidden=!signedIn
+ if(signOut)signOut.hidden=!signedIn
+ if(signedIn){
+  const email=document.querySelector('#account-email')
+  const welcome=document.querySelector('#welcome')
+  if(email)email.textContent=session.user.email||''
+  if(welcome)welcome.textContent=session.user.user_metadata?.full_name?`Welcome, ${session.user.user_metadata.full_name}`:'Your money overview'
+ }
+ resolved=true
+ document.documentElement.classList.remove('willow-auth-loading')
+ window.dispatchEvent(new CustomEvent('willow-auth-resolved',{detail:{signedIn}}))
+}
 
-// Fallback: wait until app.js has actually populated an authenticated dashboard.
-const timer=setInterval(()=>{
- const dashboard=document.querySelector('#dashboard')
- const auth=document.querySelector('#auth-panel')
- const signedIn=dashboard&&!dashboard.hidden&&(document.querySelector('#welcome')?.textContent||'').trim().length>0
- const signedOut=auth&&!auth.hidden&&dashboard?.hidden
- if(signedIn||signedOut){clearInterval(timer);reveal()}
-},75)
+async function restore(){
+ try{
+  const {data,error}=await supabase.auth.getSession()
+  if(error)throw error
+  applySession(data.session)
+ }catch(_error){
+  // A genuine session-read failure should not destroy a locally persisted session
+  // or force a sign-out. Let app.js retry while keeping the auth surface hidden.
+  setTimeout(async()=>{
+   try{const {data}=await supabase.auth.getSession();applySession(data.session)}
+   catch(_){resolved=true;document.documentElement.classList.remove('willow-auth-loading')}
+  },1200)
+ }
+}
 
-// iOS/Safari may restore an old DOM snapshot. Hide it immediately, then let app.js
-// re-check Supabase rather than showing the stale snapshot to the user.
+supabase.auth.onAuthStateChange((_event,session)=>applySession(session))
+restore()
+
+// Safari's back-forward cache can restore stale DOM. Re-read the persisted session
+// instead of reloading into the static logged-out markup.
 window.addEventListener('pageshow',event=>{
  if(!event.persisted)return
- authResolved=false
+ resolved=false
  document.documentElement.classList.add('willow-auth-loading')
- setTimeout(()=>location.reload(),0)
+ restore()
 })
 
-// Never leave the page permanently hidden if a network/auth request fails.
-setTimeout(()=>{if(!authResolved)reveal()},8000)
+setTimeout(()=>{if(!resolved)document.documentElement.classList.remove('willow-auth-loading')},8000)
