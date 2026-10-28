@@ -1,3 +1,4 @@
+import './refresh-fix.js'
 import './premium-features.js'
 import './financial-coach.js'
 import './spending-insights.js'
