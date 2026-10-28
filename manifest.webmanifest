@@ -1,0 +1,12 @@
+{
+  "name": "Willow Lantern Pay",
+  "short_name": "Willow Pay",
+  "description": "Willow Lantern Pay financial technology and money-management application.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#111827",
+  "orientation": "portrait-primary",
+  "categories": ["finance", "business"]
+}
