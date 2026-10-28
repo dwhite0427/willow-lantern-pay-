@@ -1,3 +1,4 @@
+import './auth-stability.js'
 import './refresh-fix.js'
 import './premium-features.js'
 import './financial-coach.js'
