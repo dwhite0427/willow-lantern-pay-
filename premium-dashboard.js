@@ -38,6 +38,13 @@ function cleanDashboardHeader(){
   remove.forEach(el=>el.remove())
 }
 
+function removeExtraExplanatoryText(){
+  const dashboard=document.querySelector('#dashboard')
+  if(!dashboard)return
+  dashboard.querySelectorAll('.section-note').forEach(el=>el.remove())
+  dashboard.querySelectorAll('article.card > p').forEach(el=>el.remove())
+}
+
 function mountDashboardMenu(){
   const dashboard=document.querySelector('#dashboard')
   if(!dashboard||document.querySelector('#dashboard-menu-button'))return
@@ -50,6 +57,6 @@ function mountDashboardMenu(){
   const style=document.createElement('style');style.id='dashboard-menu-style';style.textContent=`#dashboard-menu-button{position:fixed;top:18px;left:18px;z-index:1001;width:46px;height:46px;border:1px solid rgba(0,0,0,.12);border-radius:12px;background:#fff;box-shadow:0 8px 24px rgba(0,0,0,.12);display:none;align-items:center;justify-content:center;flex-direction:column;gap:5px;cursor:pointer}#dashboard-menu-button span{display:block;width:22px;height:2px;background:#1d2421;border-radius:2px}#dashboard-menu{position:fixed;top:72px;left:18px;z-index:1000;width:min(290px,calc(100vw - 36px));padding:10px;background:#fff;border:1px solid rgba(0,0,0,.1);border-radius:16px;box-shadow:0 18px 45px rgba(0,0,0,.16)}#dashboard-menu[hidden]{display:none}.dashboard-menu-item{display:block;width:100%;border:0;background:transparent;text-align:left;padding:12px 14px;border-radius:10px;font:inherit;font-weight:700;cursor:pointer;color:#1d2421}.dashboard-menu-item:hover,.dashboard-menu-item:focus{background:rgba(0,0,0,.055);outline:none}.dashboard-menu-signout{margin-top:6px;border-top:1px solid rgba(0,0,0,.08);border-radius:0 0 10px 10px}body:has(#dashboard:not([hidden])) #dashboard-menu-button{display:flex}body:has(#auth-panel:not([hidden])) #dashboard-menu-button,body:has(#auth-panel:not([hidden])) #dashboard-menu{display:none}`;document.head.append(style)
 }
 
-function mountPremiumInsights(){const dashboard=document.querySelector('#dashboard');if(!dashboard||document.querySelector('#premium-insights-card'))return;const anchor=document.querySelector('#bill-payment-history-items')?.closest('article.card')||document.querySelector('#history-items')?.closest('article.card');const card=document.createElement('article');card.id='premium-insights-card';card.className='card';card.innerHTML='<span class="eyebrow">Premium</span><h2>Premium Insights</h2><p class="section-note">Enhanced software-only insights based on your Willow Lantern Pay planning records. These are not bank transactions or individualized financial advice.</p><div data-premium-lock><p class="section-note">Premium insights are locked. Upgrade to Willow Lantern Pay Premium to access them.</p></div><div id="premium-insights" data-premium-feature hidden></div>';if(anchor)anchor.insertAdjacentElement('afterend',card);else dashboard.append(card);import('./premium-insights.js')}
-function mount(){simplifyLanding();cleanDashboardHeader();mountDashboardMenu();mountPremiumInsights()}
+function mountPremiumInsights(){const dashboard=document.querySelector('#dashboard');if(!dashboard||document.querySelector('#premium-insights-card'))return;const anchor=document.querySelector('#bill-payment-history-items')?.closest('article.card')||document.querySelector('#history-items')?.closest('article.card');const card=document.createElement('article');card.id='premium-insights-card';card.className='card';card.innerHTML='<span class="eyebrow">Premium</span><h2>Premium Insights</h2><div data-premium-lock></div><div id="premium-insights" data-premium-feature hidden></div>';if(anchor)anchor.insertAdjacentElement('afterend',card);else dashboard.append(card);import('./premium-insights.js')}
+function mount(){simplifyLanding();cleanDashboardHeader();mountDashboardMenu();mountPremiumInsights();removeExtraExplanatoryText();setTimeout(removeExtraExplanatoryText,250)}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount()
