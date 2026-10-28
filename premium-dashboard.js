@@ -1,5 +1,6 @@
 import './premium-features.js'
 import './financial-coach.js'
+import './spending-insights.js'
 
 function mountPremiumInsights(){
   const dashboard=document.querySelector('#dashboard')
