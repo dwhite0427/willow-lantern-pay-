@@ -1,5 +1,4 @@
 import './refresh-fix.js'
-import './dark-mode.js'
 import './premium-features.js'
 import './financial-coach.js'
 import './spending-insights.js'
@@ -61,5 +60,5 @@ function mountDashboardMenu(){
 }
 
 function mountPremiumInsights(){const dashboard=document.querySelector('#dashboard');if(!dashboard||document.querySelector('#premium-insights-card'))return;const anchor=document.querySelector('#bill-payment-history-items')?.closest('article.card')||document.querySelector('#history-items')?.closest('article.card');const card=document.createElement('article');card.id='premium-insights-card';card.className='card';card.innerHTML='<span class="eyebrow">Premium</span><h2>Premium Insights</h2><div data-premium-lock></div><div id="premium-insights" data-premium-feature hidden></div>';if(anchor)anchor.insertAdjacentElement('afterend',card);else dashboard.append(card);import('./premium-insights.js')}
-function mount(){simplifyLanding();cleanDashboardHeader();mountDashboardMenu();mountPremiumInsights();removeExtraExplanatoryText();setTimeout(removeExtraExplanatoryText,250)}
+function mount(){delete document.documentElement.dataset.theme;localStorage.removeItem('willow-theme');simplifyLanding();cleanDashboardHeader();mountDashboardMenu();mountPremiumInsights();removeExtraExplanatoryText();setTimeout(removeExtraExplanatoryText,250)}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount()
