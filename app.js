@@ -1,125 +1,21 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.102.0'
-
-const supabaseUrl = 'https://vrgimzvmdwwrstonrbcf.supabase.co'
-const supabasePublishableKey = 'sb_publishable_8ex4YVbGREfk93IGLBMG-g_hyZZRmLl'
-
-const supabase = createClient(supabaseUrl, supabasePublishableKey, {
-  auth: {
-    autoRefreshToken: true,
-    persistSession: true,
-    detectSessionInUrl: true,
-  },
-})
-
-const authPanel = document.querySelector('#auth-panel')
-const accountPanel = document.querySelector('#account-panel')
-const authMessage = document.querySelector('#auth-message')
-const accountEmail = document.querySelector('#account-email')
-const loginForm = document.querySelector('#login-form')
-const signupForm = document.querySelector('#signup-form')
-const resetForm = document.querySelector('#reset-form')
-const signOutButton = document.querySelector('#sign-out')
-const showLogin = document.querySelector('#show-login')
-const showSignup = document.querySelector('#show-signup')
-const showReset = document.querySelector('#show-reset')
-
-function message(text, isError = false) {
-  authMessage.textContent = text
-  authMessage.className = isError ? 'message error' : 'message success'
-}
-
-function showForm(name) {
-  loginForm.hidden = name !== 'login'
-  signupForm.hidden = name !== 'signup'
-  resetForm.hidden = name !== 'reset'
-  authMessage.textContent = ''
-}
-
-async function renderAuth() {
-  const { data, error } = await supabase.auth.getClaims()
-  const claims = error ? null : data?.claims
-  const loggedIn = Boolean(claims?.sub)
-  authPanel.hidden = loggedIn
-  accountPanel.hidden = !loggedIn
-  accountEmail.textContent = loggedIn ? (claims.email || 'Signed in') : ''
-}
-
-showLogin.addEventListener('click', () => showForm('login'))
-showSignup.addEventListener('click', () => showForm('signup'))
-showReset.addEventListener('click', () => showForm('reset'))
-
-loginForm.addEventListener('submit', async (event) => {
-  event.preventDefault()
-  const button = loginForm.querySelector('button[type="submit"]')
-  button.disabled = true
-  const email = loginForm.email.value.trim()
-  const password = loginForm.password.value
-  const { error } = await supabase.auth.signInWithPassword({ email, password })
-  button.disabled = false
-  if (error) return message(error.message, true)
-  message('Signed in successfully.')
-  await renderAuth()
-})
-
-signupForm.addEventListener('submit', async (event) => {
-  event.preventDefault()
-  const button = signupForm.querySelector('button[type="submit"]')
-  button.disabled = true
-  const fullName = signupForm.full_name.value.trim()
-  const email = signupForm.email.value.trim()
-  const password = signupForm.password.value
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      data: { full_name: fullName },
-      emailRedirectTo: window.location.origin,
-    },
-  })
-  button.disabled = false
-  if (error) return message(error.message, true)
-  if (data.session) {
-    message('Account created and signed in.')
-    await renderAuth()
-  } else {
-    message('Account created. Check your email to confirm your address, then return here to sign in.')
-  }
-})
-
-resetForm.addEventListener('submit', async (event) => {
-  event.preventDefault()
-  const button = resetForm.querySelector('button[type="submit"]')
-  button.disabled = true
-  const email = resetForm.email.value.trim()
-  const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: window.location.origin,
-  })
-  button.disabled = false
-  if (error) return message(error.message, true)
-  message('Password reset email requested. Check your inbox.')
-})
-
-signOutButton.addEventListener('click', async () => {
-  signOutButton.disabled = true
-  const { error } = await supabase.auth.signOut({ scope: 'local' })
-  signOutButton.disabled = false
-  if (error) return alert(error.message)
-  showForm('login')
-  await renderAuth()
-})
-
-supabase.auth.onAuthStateChange((event) => {
-  if (event === 'PASSWORD_RECOVERY') {
-    const newPassword = window.prompt('Enter your new Willow Lantern Pay password:')
-    if (newPassword && newPassword.length >= 8) {
-      supabase.auth.updateUser({ password: newPassword }).then(({ error }) => {
-        if (error) alert(error.message)
-        else alert('Password updated successfully.')
-      })
-    }
-  }
-  setTimeout(renderAuth, 0)
-})
-
-showForm('login')
-renderAuth()
+const supabase=createClient('https://vrgimzvmdwwrstonrbcf.supabase.co','sb_publishable_8ex4YVbGREfk93IGLBMG-g_hyZZRmLl',{auth:{autoRefreshToken:true,persistSession:true,detectSessionInUrl:true}})
+const $=s=>document.querySelector(s), money=c=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format((Number(c)||0)/100), cents=v=>Math.round(Number(v)*100), today=()=>new Date().toISOString().slice(0,10), monthStart=()=>today().slice(0,7)+'-01'
+const authPanel=$('#auth-panel'),dashboard=$('#dashboard'),authMessage=$('#auth-message'),dataMessage=$('#data-message'),signOut=$('#sign-out'),login=$('#login-form'),signup=$('#signup-form'),reset=$('#reset-form')
+function msg(el,text,error=false){el.textContent=text;el.className='message '+(error?'error':'success')}
+function showForm(n){login.hidden=n!=='login';signup.hidden=n!=='signup';reset.hidden=n!=='reset';authMessage.textContent=''}
+$('#show-login').onclick=()=>showForm('login');$('#show-signup').onclick=()=>showForm('signup');$('#show-reset').onclick=()=>showForm('reset')
+async function user(){const {data}=await supabase.auth.getUser();return data.user}
+async function renderAuth(){const u=await user();authPanel.hidden=!!u;dashboard.hidden=!u;signOut.hidden=!u;if(u){$('#account-email').textContent=u.email||'';$('#welcome').textContent=(u.user_metadata?.full_name?`Welcome, ${u.user_metadata.full_name}`:'Your money overview');await loadData()}}
+login.onsubmit=async e=>{e.preventDefault();const {error}=await supabase.auth.signInWithPassword({email:login.email.value.trim(),password:login.password.value});if(error)return msg(authMessage,error.message,true);await renderAuth()}
+signup.onsubmit=async e=>{e.preventDefault();const {data,error}=await supabase.auth.signUp({email:signup.email.value.trim(),password:signup.password.value,options:{data:{full_name:signup.full_name.value.trim()},emailRedirectTo:location.origin}});if(error)return msg(authMessage,error.message,true);msg(authMessage,data.session?'Account created.':'Check your email to confirm your account.');await renderAuth()}
+reset.onsubmit=async e=>{e.preventDefault();const {error}=await supabase.auth.resetPasswordForEmail(reset.email.value.trim(),{redirectTo:location.origin});msg(authMessage,error?error.message:'Password reset email sent.',!!error)}
+signOut.onclick=async()=>{await supabase.auth.signOut({scope:'local'});showForm('login');await renderAuth()}
+async function loadData(){const u=await user();if(!u)return;const [er,br,gr,bir]=await Promise.all([supabase.from('entries').select('*').eq('user_id',u.id).order('occurred_on',{ascending:false}).limit(10),supabase.from('budgets').select('*').eq('user_id',u.id).eq('month_start',monthStart()).order('category'),supabase.from('savings_goals').select('*').eq('user_id',u.id).order('created_at',{ascending:false}),supabase.from('bills').select('*').eq('user_id',u.id).order('due_date')]);const errors=[er.error,br.error,gr.error,bir.error].filter(Boolean);if(errors.length)return msg(dataMessage,errors[0].message,true);const entries=er.data||[],budgets=br.data||[],goals=gr.data||[],bills=bir.data||[];$('#income-total').textContent=money(entries.filter(x=>x.kind==='INCOME').reduce((a,x)=>a+Number(x.amount_cents),0));$('#expense-total').textContent=money(entries.filter(x=>x.kind==='EXPENSE').reduce((a,x)=>a+Number(x.amount_cents),0));$('#budget-total').textContent=money(budgets.reduce((a,x)=>a+Number(x.limit_cents),0));$('#savings-total').textContent=money(goals.reduce((a,x)=>a+Number(x.current_cents),0));renderItems('#entry-items',entries,x=>`${x.kind==='INCOME'?'Income':'Expense'} · ${x.category}`,x=>money(x.amount_cents));renderItems('#budget-items',budgets,x=>x.category,x=>money(x.limit_cents));renderItems('#goal-items',goals,x=>x.name,x=>`${money(x.current_cents)} / ${money(x.target_cents)}`);renderItems('#bill-items',bills,x=>`${x.name} · ${x.due_date}`,x=>money(x.amount_cents))}
+function renderItems(sel,rows,left,right){const el=$(sel);el.innerHTML='';rows.slice(0,8).forEach(x=>{const d=document.createElement('div');d.className='item';const a=document.createElement('span'),b=document.createElement('strong');a.textContent=left(x);b.textContent=right(x);d.append(a,b);el.append(d)})}
+async function add(table,row,form){const u=await user();if(!u)return;const {error}=await supabase.from(table).insert({...row,user_id:u.id});if(error)return msg(dataMessage,error.message,true);form.reset();msg(dataMessage,'Saved successfully.');await loadData()}
+$('#entry-form').onsubmit=e=>{e.preventDefault();const f=e.currentTarget;add('entries',{kind:f.kind.value,amount_cents:cents(f.amount.value),category:f.category.value.trim(),description:f.description.value.trim()||null,occurred_on:f.occurred_on.value,provenance:'MANUAL_RECORD'},f)}
+$('#budget-form').onsubmit=e=>{e.preventDefault();const f=e.currentTarget;add('budgets',{month_start:monthStart(),category:f.category.value.trim(),limit_cents:cents(f.limit.value)},f)}
+$('#goal-form').onsubmit=e=>{e.preventDefault();const f=e.currentTarget;add('savings_goals',{name:f.name.value.trim(),target_cents:cents(f.target.value),current_cents:cents(f.current.value||0),target_date:f.target_date.value||null},f)}
+$('#bill-form').onsubmit=e=>{e.preventDefault();const f=e.currentTarget;add('bills',{name:f.name.value.trim(),amount_cents:cents(f.amount.value),due_date:f.due_date.value,is_paid:false},f)}
+$('#entry-form').occurred_on.value=today();supabase.auth.onAuthStateChange((event)=>{if(event==='PASSWORD_RECOVERY'){const p=prompt('Enter a new password (8+ characters):');if(p?.length>=8)supabase.auth.updateUser({password:p}).then(({error})=>alert(error?error.message:'Password updated.'))}setTimeout(renderAuth,0)});showForm('login');renderAuth()
