@@ -6,7 +6,7 @@ const PAGE_GROUPS={
   bills:['#bill-form','#bill-items','#reminder-card','#bill-payment-history-items'],
   shared:['#split-form','#split-items'],
   education:['#education-center-card'],
-  profile:['#profile-form']
+  profile:['#profile-center-card','#profile-form']
 }
 const TITLES={overview:'Overview',entries:'Income & Expenses',budgets:'Budgets',savings:'Savings Goals',bills:'Bills',shared:'Shared Expenses',education:'Financial Education',profile:'Profile'}
 
@@ -20,21 +20,21 @@ function showPage(name='overview'){
   const tools=dashboard.querySelector('.tools');if(tools){for(const child of tools.children)child.hidden=!selected.has(child);tools.hidden=![...tools.children].some(x=>!x.hidden)}
   dashboard.dataset.page=valid
   const title=document.querySelector('#welcome');if(title)title.textContent=TITLES[valid]
-  const subtitle=document.querySelector('#account-email');if(subtitle)subtitle.hidden=valid!=='overview'
+  const subtitle=document.querySelector('#account-email');if(subtitle)subtitle.hidden=true
   history.replaceState(null,'',`#${valid}`)
   window.scrollTo({top:0,behavior:'smooth'})
 }
 
 function wireMenu(){
   const menu=document.querySelector('#dashboard-menu');if(!menu)return
-  const map=[['Overview','overview'],['Income & Expenses','entries'],['Budgets','budgets'],['Savings Goals','savings'],['Bills','bills'],['Shared Expenses','shared'],['Financial Education','education'],['Profile','profile']]
+  const map=[['Overview','overview'],['Profile','profile'],['Income & Expenses','entries'],['Budgets','budgets'],['Savings Goals','savings'],['Bills','bills'],['Shared Expenses','shared'],['Financial Education','education']]
   for(const [label,page] of map){const b=[...menu.querySelectorAll('.dashboard-menu-item')].find(x=>x.textContent.trim()===label);if(b)b.onclick=()=>{showPage(page);menu.hidden=true;document.querySelector('#dashboard-menu-button')?.setAttribute('aria-expanded','false')}}
 }
 
 function mount(){
   const dashboard=document.querySelector('#dashboard');if(!dashboard)return
   const style=document.createElement('style');style.id='focused-dashboard-pages';style.textContent=`#dashboard[data-page] .card[hidden],#dashboard[data-page] .summary[hidden],#dashboard[data-page] .payment-grid[hidden],#dashboard[data-page] .pay-hub[hidden],#dashboard[data-page] .tools[hidden]{display:none!important}`;document.head.append(style)
-  const init=()=>{wireMenu();showPage(location.hash.slice(1)||'overview')}
+  const init=()=>{wireMenu();showPage(location.hash.slice(1)||localStorage.getItem('willow-default-page')||'overview')}
   setTimeout(init,650)
   window.addEventListener('hashchange',()=>showPage(location.hash.slice(1)||'overview'))
 }
