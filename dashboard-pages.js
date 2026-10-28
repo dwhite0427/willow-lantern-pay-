@@ -1,5 +1,5 @@
 const PAGE_GROUPS={
-  overview:['#dashboard-home-card'],
+  overview:['#dashboard-home-card','[data-overview-feature="money"]','[data-overview-feature="invest"]'],
   entries:['#entry-form','#entry-items','#history-items','#history-search','#history-kind','#history-from','#history-to','#history-clear'],
   budgets:['#budget-form','#budget-items'],
   savings:['#goal-form','#goal-items'],
