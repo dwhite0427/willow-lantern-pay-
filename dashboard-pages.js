@@ -10,14 +10,15 @@ const PAGE_GROUPS={
 }
 const TITLES={overview:'Overview',entries:'Income & Expenses',budgets:'Budgets',savings:'Savings Goals',bills:'Bills',shared:'Shared Expenses',education:'Financial Education',profile:'Profile'}
 
-function cardFor(selector){const el=document.querySelector(selector);if(!el)return null;if(el.matches('article.card,.card,.pay-hub,.summary,.payment-grid'))return el;return el.closest('article.card,.card')||el}
-function allDashboardCards(){return [...document.querySelectorAll('#dashboard article.card,#dashboard .card,#dashboard .pay-hub,#dashboard .summary,#dashboard .payment-grid')].filter((x,i,a)=>a.indexOf(x)===i)}
+function cardFor(selector){const el=document.querySelector(selector);if(!el)return null;if(el.matches('article.card,.card,.pay-hub,.summary'))return el;return el.closest('article.card,.card')||el}
+function allDashboardCards(){return [...document.querySelectorAll('#dashboard article.card,#dashboard .card,#dashboard .pay-hub,#dashboard .summary')].filter((x,i,a)=>a.indexOf(x)===i)}
 function selectedCards(name){const set=new Set();for(const s of PAGE_GROUPS[name]||[]){const c=cardFor(s);if(c)set.add(c)}return set}
 function showPage(name='overview'){
   const dashboard=document.querySelector('#dashboard');if(!dashboard)return
   const valid=TITLES[name]?name:'overview',selected=selectedCards(valid)
   for(const c of allDashboardCards())c.hidden=!selected.has(c)
   const tools=dashboard.querySelector('.tools');if(tools){for(const child of tools.children)child.hidden=!selected.has(child);tools.hidden=![...tools.children].some(x=>!x.hidden)}
+  const paymentGrid=dashboard.querySelector('.payment-grid');if(paymentGrid){for(const child of paymentGrid.children)child.hidden=!selected.has(child);paymentGrid.hidden=![...paymentGrid.children].some(x=>!x.hidden)}
   dashboard.dataset.page=valid
   const title=document.querySelector('#welcome');if(title)title.textContent=TITLES[valid]
   const subtitle=document.querySelector('#account-email');if(subtitle)subtitle.hidden=true
