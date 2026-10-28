@@ -1,68 +1,11 @@
 <!doctype html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Willow Lantern Pay — secure money-management tools for budgeting, expenses, savings goals, and financial planning." />
-  <title>Willow Lantern Pay</title>
-  <style>
-    :root{font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#17231c;background:#f7faf7}*{box-sizing:border-box}body{margin:0}.wrap{max-width:1000px;margin:auto;padding:24px}.nav{display:flex;justify-content:space-between;align-items:center;padding:12px 0}.brand{font-weight:800;font-size:1.15rem}.pill,.primary{padding:11px 17px;border:0;border-radius:999px;background:#17231c;color:white;text-decoration:none;font-weight:700;cursor:pointer}.hero{padding:75px 0 55px;max-width:760px}.eyebrow{font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:.78rem}.hero h1{font-size:clamp(2.7rem,8vw,5.8rem);line-height:.95;margin:14px 0 24px}.hero p{font-size:1.15rem;line-height:1.65;color:#506057;max-width:650px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;padding-bottom:55px}.card,.authbox{background:white;border:1px solid #e1e9e3;border-radius:20px;padding:24px}.card h2{font-size:1.05rem;margin-top:0}.card p{color:#607067;line-height:1.55}.authbox{max-width:520px;margin:0 0 60px}.authbox h2{margin:0 0 8px}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}.tab{border:1px solid #ccd8cf;background:white;border-radius:999px;padding:8px 12px;cursor:pointer}form{display:grid;gap:12px}label{font-size:.85rem;font-weight:700}input{width:100%;padding:13px 14px;border:1px solid #cbd7ce;border-radius:12px;font:inherit}.message{margin-top:14px;padding:12px;border-radius:12px}.message:empty{display:none}.success{background:#edf7ef}.error{background:#fff0f0;color:#8b2525}.account{background:#eef4ef;border-radius:20px;padding:24px;margin-bottom:60px}.account h2{margin-top:0}.status{display:inline-block;padding:6px 10px;border-radius:999px;background:#dceade;font-size:.8rem;font-weight:700}.notice{background:#eef4ef;border-radius:20px;padding:24px;margin-bottom:60px;line-height:1.55}footer{border-top:1px solid #dfe7e1;padding:28px 0;color:#65736b;font-size:.9rem}[hidden]{display:none!important}@media(max-width:560px){.hero{padding-top:50px}}
-  </style>
-</head>
-<body>
-  <main class="wrap">
-    <nav class="nav"><div class="brand">Willow Lantern Pay</div><a class="pill" href="#account">Account</a></nav>
-    <section class="hero">
-      <div class="eyebrow">Willow Lantern Financial Technologies</div>
-      <h1>Money management, made clearer.</h1>
-      <p>Plan a budget, organize expenses, track savings goals, and build stronger financial habits from one straightforward workspace.</p>
-    </section>
-
-    <section id="account">
-      <div id="auth-panel" class="authbox">
-        <h2>Access Willow Lantern Pay</h2>
-        <p>Create a real account or sign in to your existing account.</p>
-        <div class="tabs">
-          <button id="show-login" class="tab" type="button">Log in</button>
-          <button id="show-signup" class="tab" type="button">Create account</button>
-          <button id="show-reset" class="tab" type="button">Forgot password</button>
-        </div>
-        <form id="login-form">
-          <div><label for="login-email">Email</label><input id="login-email" name="email" type="email" autocomplete="email" required /></div>
-          <div><label for="login-password">Password</label><input id="login-password" name="password" type="password" autocomplete="current-password" minlength="8" required /></div>
-          <button class="primary" type="submit">Log in</button>
-        </form>
-        <form id="signup-form" hidden>
-          <div><label for="signup-name">Full name</label><input id="signup-name" name="full_name" type="text" autocomplete="name" required /></div>
-          <div><label for="signup-email">Email</label><input id="signup-email" name="email" type="email" autocomplete="email" required /></div>
-          <div><label for="signup-password">Password</label><input id="signup-password" name="password" type="password" autocomplete="new-password" minlength="8" required /></div>
-          <button class="primary" type="submit">Create account</button>
-        </form>
-        <form id="reset-form" hidden>
-          <div><label for="reset-email">Email</label><input id="reset-email" name="email" type="email" autocomplete="email" required /></div>
-          <button class="primary" type="submit">Send password reset</button>
-        </form>
-        <div id="auth-message" class="message" role="status" aria-live="polite"></div>
-      </div>
-
-      <div id="account-panel" class="account" hidden>
-        <span class="status">Authenticated</span>
-        <h2>Your Willow Lantern Pay account</h2>
-        <p id="account-email"></p>
-        <p>Your secure account is connected. Budget, expense, savings, and bill tools will be added to this dashboard next.</p>
-        <button id="sign-out" class="primary" type="button">Sign out</button>
-      </div>
-    </section>
-
-    <section id="features" class="grid">
-      <article class="card"><h2>Budgeting</h2><p>Organize income and planned spending so you can see where your money is going.</p></article>
-      <article class="card"><h2>Expense Tracking</h2><p>Keep expenses organized by category and review your spending patterns.</p></article>
-      <article class="card"><h2>Savings Goals</h2><p>Create goals and track progress toward the things that matter to you.</p></article>
-      <article class="card"><h2>Bill Planning</h2><p>Keep upcoming obligations visible and plan ahead for recurring expenses.</p></article>
-    </section>
-    <section class="notice"><strong>Financial technology notice:</strong> Willow Lantern Pay is a financial technology platform, not a bank. Banking, payment, card, deposit, and other regulated financial services are not represented as active unless provided through appropriately approved third-party providers.</section>
-    <footer>© 2026 Willow Lantern Financial Technologies LLC · Willow Lantern Pay</footer>
-  </main>
-  <script type="module" src="/app.js"></script>
-</body>
-</html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Willow Lantern Pay money-management tools"><title>Willow Lantern Pay</title><style>
+:root{font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;color:#17231c;background:#f5f8f5}*{box-sizing:border-box}body{margin:0}.wrap{max-width:1100px;margin:auto;padding:20px}.nav{display:flex;justify-content:space-between;align-items:center;padding:12px 0}.brand{font-weight:850}.btn{padding:11px 16px;border:0;border-radius:999px;background:#17231c;color:#fff;font-weight:750;cursor:pointer}.secondary{background:#e8efe9;color:#17231c}.hero{padding:55px 0 35px}.hero h1{font-size:clamp(2.5rem,7vw,5rem);line-height:1;margin:10px 0}.hero p,.muted{color:#5a6b61}.eyebrow{font-size:.78rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase}.panel,.card{background:#fff;border:1px solid #dde7df;border-radius:20px;padding:22px}.auth{max-width:520px;margin-bottom:40px}.tabs,.actions{display:flex;gap:8px;flex-wrap:wrap;margin:15px 0}.tab{border:1px solid #cad6cd;background:#fff;border-radius:999px;padding:8px 12px}form{display:grid;gap:11px}input,select{width:100%;padding:12px;border:1px solid #c8d4cb;border-radius:11px;font:inherit}label{font-size:.82rem;font-weight:750}.message{padding:11px;border-radius:10px;margin-top:12px}.message:empty{display:none}.success{background:#edf7ef}.error{background:#fff0f0;color:#8b2525}.dashboard{display:grid;gap:18px;margin-bottom:40px}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.metric{background:#17231c;color:#fff;border-radius:18px;padding:20px}.metric small{opacity:.72}.metric strong{display:block;font-size:1.5rem;margin-top:8px}.tools{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}.card h2{margin-top:0}.items{display:grid;gap:8px;margin-top:15px}.item{display:flex;justify-content:space-between;gap:12px;padding:11px;background:#f4f7f4;border-radius:12px}.notice{background:#eaf1eb;border-radius:18px;padding:20px;margin:30px 0;line-height:1.5}footer{border-top:1px solid #dce5de;padding:25px 0;color:#66756c}[hidden]{display:none!important}@media(max-width:750px){.summary,.tools{grid-template-columns:1fr}.hero{padding-top:35px}}
+</style></head><body><main class="wrap"><nav class="nav"><div class="brand">Willow Lantern Pay</div><button id="sign-out" class="btn secondary" hidden>Sign out</button></nav><section class="hero"><div class="eyebrow">Willow Lantern Financial Technologies</div><h1>Money management, made clearer.</h1><p>Budget, record income and expenses, build savings goals, and plan upcoming bills.</p></section>
+<section id="auth-panel" class="panel auth"><h2>Access your account</h2><div class="tabs"><button id="show-login" class="tab">Log in</button><button id="show-signup" class="tab">Create account</button><button id="show-reset" class="tab">Forgot password</button></div><form id="login-form"><label>Email<input name="email" type="email" required></label><label>Password<input name="password" type="password" minlength="8" required></label><button class="btn">Log in</button></form><form id="signup-form" hidden><label>Full name<input name="full_name" required></label><label>Email<input name="email" type="email" required></label><label>Password<input name="password" type="password" minlength="8" required></label><button class="btn">Create account</button></form><form id="reset-form" hidden><label>Email<input name="email" type="email" required></label><button class="btn">Send password reset</button></form><div id="auth-message" class="message"></div></section>
+<section id="dashboard" class="dashboard" hidden><div><span class="eyebrow">Authenticated dashboard</span><h2 id="welcome">Your money overview</h2><p id="account-email" class="muted"></p></div><div class="summary"><div class="metric"><small>Income recorded</small><strong id="income-total">$0.00</strong></div><div class="metric"><small>Expenses recorded</small><strong id="expense-total">$0.00</strong></div><div class="metric"><small>Budget planned</small><strong id="budget-total">$0.00</strong></div><div class="metric"><small>Savings recorded</small><strong id="savings-total">$0.00</strong></div></div><div class="tools">
+<article class="card"><h2>Income & expenses</h2><form id="entry-form"><select name="kind"><option value="EXPENSE">Expense</option><option value="INCOME">Income</option></select><input name="amount" type="number" min="0.01" step="0.01" placeholder="Amount" required><input name="category" placeholder="Category" required><input name="description" placeholder="Description (optional)"><input name="occurred_on" type="date" required><button class="btn">Add record</button></form><div id="entry-items" class="items"></div></article>
+<article class="card"><h2>Monthly budget</h2><form id="budget-form"><input name="category" placeholder="Category" required><input name="limit" type="number" min="0.01" step="0.01" placeholder="Monthly limit" required><button class="btn">Add budget</button></form><div id="budget-items" class="items"></div></article>
+<article class="card"><h2>Savings goals</h2><form id="goal-form"><input name="name" placeholder="Goal name" required><input name="target" type="number" min="0.01" step="0.01" placeholder="Target amount" required><input name="current" type="number" min="0" step="0.01" placeholder="Already saved" value="0"><input name="target_date" type="date"><button class="btn">Add goal</button></form><div id="goal-items" class="items"></div></article>
+<article class="card"><h2>Bills</h2><form id="bill-form"><input name="name" placeholder="Bill name" required><input name="amount" type="number" min="0.01" step="0.01" placeholder="Amount" required><input name="due_date" type="date" required><button class="btn">Add bill</button></form><div id="bill-items" class="items"></div></article></div><div id="data-message" class="message"></div></section>
+<section class="notice"><strong>Financial technology notice:</strong> Willow Lantern Pay is a financial technology platform, not a bank. Records entered here are money-management records and do not move money. Banking, payment, card, deposit, and other regulated services remain unavailable unless enabled through appropriately approved providers.</section><footer>© 2026 Willow Lantern Financial Technologies LLC · Willow Lantern Pay</footer></main><script type="module" src="/app.js"></script></body></html>
