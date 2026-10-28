@@ -5,9 +5,10 @@ const PAGE_GROUPS={
   savings:['#goal-form'],
   bills:['#bill-form','#bill-payment-history-items'],
   shared:['#split-form'],
+  education:['#education-center-card'],
   profile:['#profile-form']
 }
-const TITLES={overview:'Overview',entries:'Income & Expenses',budgets:'Budgets',savings:'Savings Goals',bills:'Bills',shared:'Shared Expenses',profile:'Profile'}
+const TITLES={overview:'Overview',entries:'Income & Expenses',budgets:'Budgets',savings:'Savings Goals',bills:'Bills',shared:'Shared Expenses',education:'Financial Education',profile:'Profile'}
 
 function cardFor(selector){const el=document.querySelector(selector);if(!el)return null;if(el.matches('article.card,.card,.pay-hub,.summary,.payment-grid'))return el;return el.closest('article.card,.card')||el}
 function allPageCards(){const set=new Set();for(const selectors of Object.values(PAGE_GROUPS))for(const s of selectors){const c=cardFor(s);if(c)set.add(c)}return [...set]}
@@ -25,7 +26,7 @@ function showPage(name='overview'){
 
 function wireMenu(){
   const menu=document.querySelector('#dashboard-menu');if(!menu)return
-  const map=[['Overview','overview'],['Income & Expenses','entries'],['Budgets','budgets'],['Savings Goals','savings'],['Bills','bills'],['Shared Expenses','shared'],['Profile','profile']]
+  const map=[['Overview','overview'],['Income & Expenses','entries'],['Budgets','budgets'],['Savings Goals','savings'],['Bills','bills'],['Shared Expenses','shared'],['Financial Education','education'],['Profile','profile']]
   for(const [label,page] of map){const b=[...menu.querySelectorAll('.dashboard-menu-item')].find(x=>x.textContent.trim()===label);if(b)b.onclick=()=>{showPage(page);menu.hidden=true;document.querySelector('#dashboard-menu-button')?.setAttribute('aria-expanded','false')}}
 }
 
