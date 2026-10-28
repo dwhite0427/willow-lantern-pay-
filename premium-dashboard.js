@@ -12,6 +12,9 @@ function simplifyLanding(){
   const heading=auth.querySelector('h2')
   if(heading)heading.textContent='Willow Lantern Pay'
 
+  const navBrand=document.querySelector('.nav .brand')
+  if(navBrand)navBrand.classList.add('landing-nav-brand')
+
   const tabs=auth.querySelector('.tabs')
   const message=document.querySelector('#auth-message')
   if(tabs){
@@ -23,13 +26,16 @@ function simplifyLanding(){
   const style=document.createElement('style')
   style.id='landing-layout-style'
   style.textContent=`
-    #auth-panel{margin:34px auto 40px;max-width:520px}
-    #auth-panel>h2{text-align:center;font-size:2rem;margin:0 0 22px}
-    #auth-panel .auth-actions-bottom{display:grid;grid-template-columns:1fr;gap:9px;margin:14px 0 0}
-    #auth-panel .auth-actions-bottom .tab{width:100%;padding:11px 16px;font-weight:750;cursor:pointer}
-    #auth-panel #show-login{display:none}
-    #auth-panel form:not([hidden])~.auth-actions-bottom #show-login{display:block}
-    @media(min-width:560px){#auth-panel{margin-top:48px}}
+    body:has(#auth-panel:not([hidden])) .landing-nav-brand{visibility:hidden}
+    #auth-panel{margin:42px auto 40px;max-width:520px}
+    #auth-panel>h2{text-align:center;font-size:2.15rem;margin:0 0 24px;font-weight:850}
+    #auth-panel form{margin:0}
+    #auth-panel .auth-actions-bottom{display:grid;grid-template-columns:1fr;gap:10px;margin:16px 0 0}
+    #auth-panel .auth-actions-bottom .tab{width:100%;padding:12px 16px;font-weight:750;cursor:pointer}
+    #auth-panel #show-login{display:block}
+    #auth-panel #show-signup{display:block}
+    #auth-panel #show-reset{display:block}
+    @media(min-width:560px){#auth-panel{margin-top:58px}}
   `
   if(!document.querySelector('#landing-layout-style'))document.head.append(style)
 }
