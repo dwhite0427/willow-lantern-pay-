@@ -1,5 +1,5 @@
 const PAGE_GROUPS={
-  overview:['.pay-hub','.payment-grid','#reminder-card','.summary','#financial-coach-card','#spending-insights-card','#monthly-cash-flow-card','#premium-insights-card'],
+  overview:['#dashboard-home-card','.pay-hub','.payment-grid','#reminder-card','.summary','#financial-coach-card','#spending-insights-card','#monthly-cash-flow-card','#premium-insights-card'],
   entries:['#entry-form'],
   budgets:['#budget-form'],
   savings:['#goal-form'],
@@ -33,7 +33,7 @@ function mount(){
   const dashboard=document.querySelector('#dashboard');if(!dashboard)return
   const style=document.createElement('style');style.textContent=`#dashboard[data-page]>.tools{display:grid}#dashboard[data-page] .card[hidden],#dashboard[data-page] .summary[hidden],#dashboard[data-page] .payment-grid[hidden],#dashboard[data-page] .pay-hub[hidden]{display:none!important}`;document.head.append(style)
   const init=()=>{wireMenu();showPage(location.hash.slice(1)||'overview')}
-  setTimeout(init,350)
+  setTimeout(init,500)
   window.addEventListener('hashchange',()=>showPage(location.hash.slice(1)||'overview'))
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount()
