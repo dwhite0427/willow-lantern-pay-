@@ -23,6 +23,20 @@ function simplifyLanding(){
   if(!document.querySelector('#landing-layout-style'))document.head.append(style)
 }
 
+function cleanDashboardHeader(){
+  const dashboard=document.querySelector('#dashboard')
+  if(!dashboard)return
+  const email=document.querySelector('#account-email')
+  if(email)email.style.display='none'
+  const walker=document.createTreeWalker(dashboard,NodeFilter.SHOW_ELEMENT)
+  const remove=[]
+  while(walker.nextNode()){
+    const el=walker.currentNode
+    if(el.children.length===0&&el.textContent.trim().toUpperCase()==='AUTHENTICATED DASHBOARD')remove.push(el)
+  }
+  remove.forEach(el=>el.remove())
+}
+
 function mountDashboardMenu(){
   const dashboard=document.querySelector('#dashboard')
   if(!dashboard||document.querySelector('#dashboard-menu-button'))return
@@ -36,5 +50,5 @@ function mountDashboardMenu(){
 }
 
 function mountPremiumInsights(){const dashboard=document.querySelector('#dashboard');if(!dashboard||document.querySelector('#premium-insights-card'))return;const anchor=document.querySelector('#bill-payment-history-items')?.closest('article.card')||document.querySelector('#history-items')?.closest('article.card');const card=document.createElement('article');card.id='premium-insights-card';card.className='card';card.innerHTML='<span class="eyebrow">Premium</span><h2>Premium Insights</h2><p class="section-note">Enhanced software-only insights based on your Willow Lantern Pay planning records. These are not bank transactions or individualized financial advice.</p><div data-premium-lock><p class="section-note">Premium insights are locked. Upgrade to Willow Lantern Pay Premium to access them.</p></div><div id="premium-insights" data-premium-feature hidden></div>';if(anchor)anchor.insertAdjacentElement('afterend',card);else dashboard.append(card);import('./premium-insights.js')}
-function mount(){simplifyLanding();mountDashboardMenu();mountPremiumInsights()}
+function mount(){simplifyLanding();cleanDashboardHeader();mountDashboardMenu();mountPremiumInsights()}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount()
