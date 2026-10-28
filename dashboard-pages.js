@@ -1,25 +1,26 @@
 const PAGE_GROUPS={
-  overview:['#dashboard-home-card','.pay-hub','.payment-grid','#reminder-card','.summary','#financial-coach-card','#spending-insights-card','#monthly-cash-flow-card','#premium-insights-card'],
-  entries:['#entry-form'],
-  budgets:['#budget-form'],
-  savings:['#goal-form'],
-  bills:['#bill-form','#bill-payment-history-items'],
-  shared:['#split-form'],
+  overview:['#dashboard-home-card'],
+  entries:['#entry-form','#entry-items','#history-items','#history-search','#history-kind','#history-from','#history-to','#history-clear'],
+  budgets:['#budget-form','#budget-items'],
+  savings:['#goal-form','#goal-items'],
+  bills:['#bill-form','#bill-items','#reminder-card','#bill-payment-history-items'],
+  shared:['#split-form','#split-items'],
   education:['#education-center-card'],
   profile:['#profile-form']
 }
 const TITLES={overview:'Overview',entries:'Income & Expenses',budgets:'Budgets',savings:'Savings Goals',bills:'Bills',shared:'Shared Expenses',education:'Financial Education',profile:'Profile'}
 
 function cardFor(selector){const el=document.querySelector(selector);if(!el)return null;if(el.matches('article.card,.card,.pay-hub,.summary,.payment-grid'))return el;return el.closest('article.card,.card')||el}
-function allPageCards(){const set=new Set();for(const selectors of Object.values(PAGE_GROUPS))for(const s of selectors){const c=cardFor(s);if(c)set.add(c)}return [...set]}
+function allDashboardCards(){return [...document.querySelectorAll('#dashboard article.card,#dashboard .card,#dashboard .pay-hub,#dashboard .summary,#dashboard .payment-grid')].filter((x,i,a)=>a.indexOf(x)===i)}
+function selectedCards(name){const set=new Set();for(const s of PAGE_GROUPS[name]||[]){const c=cardFor(s);if(c)set.add(c)}return set}
 function showPage(name='overview'){
   const dashboard=document.querySelector('#dashboard');if(!dashboard)return
-  const valid=TITLES[name]?name:'overview';const selected=new Set()
-  for(const s of PAGE_GROUPS[valid]){const c=cardFor(s);if(c)selected.add(c)}
-  for(const c of allPageCards())c.hidden=!selected.has(c)
-  const tools=dashboard.querySelector('.tools');if(tools){const visible=[...tools.children].some(x=>!x.hidden);tools.hidden=!visible}
+  const valid=TITLES[name]?name:'overview',selected=selectedCards(valid)
+  for(const c of allDashboardCards())c.hidden=!selected.has(c)
+  const tools=dashboard.querySelector('.tools');if(tools){for(const child of tools.children)child.hidden=!selected.has(child);tools.hidden=![...tools.children].some(x=>!x.hidden)}
   dashboard.dataset.page=valid
   const title=document.querySelector('#welcome');if(title)title.textContent=TITLES[valid]
+  const subtitle=document.querySelector('#account-email');if(subtitle)subtitle.hidden=valid!=='overview'
   history.replaceState(null,'',`#${valid}`)
   window.scrollTo({top:0,behavior:'smooth'})
 }
@@ -32,9 +33,9 @@ function wireMenu(){
 
 function mount(){
   const dashboard=document.querySelector('#dashboard');if(!dashboard)return
-  const style=document.createElement('style');style.textContent=`#dashboard[data-page]>.tools{display:grid}#dashboard[data-page] .card[hidden],#dashboard[data-page] .summary[hidden],#dashboard[data-page] .payment-grid[hidden],#dashboard[data-page] .pay-hub[hidden]{display:none!important}`;document.head.append(style)
+  const style=document.createElement('style');style.id='focused-dashboard-pages';style.textContent=`#dashboard[data-page] .card[hidden],#dashboard[data-page] .summary[hidden],#dashboard[data-page] .payment-grid[hidden],#dashboard[data-page] .pay-hub[hidden],#dashboard[data-page] .tools[hidden]{display:none!important}`;document.head.append(style)
   const init=()=>{wireMenu();showPage(location.hash.slice(1)||'overview')}
-  setTimeout(init,500)
+  setTimeout(init,650)
   window.addEventListener('hashchange',()=>showPage(location.hash.slice(1)||'overview'))
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount()
