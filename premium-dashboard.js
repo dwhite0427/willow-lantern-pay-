@@ -6,6 +6,7 @@ import './spending-insights.js'
 import './dashboard-home.js'
 import './financial-education.js'
 import './profile-center.js'
+import './account-settings.js'
 import './dashboard-pages.js'
 
 function simplifyLanding(){
@@ -53,7 +54,7 @@ function mountDashboardMenu(){
   if(!dashboard||document.querySelector('#dashboard-menu-button'))return
   const button=document.createElement('button');button.id='dashboard-menu-button';button.type='button';button.setAttribute('aria-label','Open dashboard menu');button.setAttribute('aria-expanded','false');button.innerHTML='<span></span><span></span><span></span>'
   const menu=document.createElement('nav');menu.id='dashboard-menu';menu.setAttribute('aria-label','Dashboard pages');menu.hidden=true
-  for(const label of ['Overview','Profile','Income & Expenses','Budgets','Savings Goals','Bills','Shared Expenses','Financial Education']){const link=document.createElement('button');link.type='button';link.className='dashboard-menu-item';link.textContent=label;menu.append(link)}
+  for(const label of ['Overview','Profile','Account & Security','Income & Expenses','Budgets','Savings Goals','Bills','Shared Expenses','Financial Education']){const link=document.createElement('button');link.type='button';link.className='dashboard-menu-item';link.textContent=label;menu.append(link)}
   const signOut=document.querySelector('#sign-out')
   if(signOut){signOut.style.display='none';const logout=document.createElement('button');logout.type='button';logout.className='dashboard-menu-item dashboard-menu-signout';logout.textContent='Sign out';logout.onclick=()=>{menu.hidden=true;button.setAttribute('aria-expanded','false');signOut.click()};menu.append(logout)}
   button.onclick=e=>{e.stopPropagation();menu.hidden=!menu.hidden;button.setAttribute('aria-expanded',String(!menu.hidden))};menu.onclick=e=>e.stopPropagation();document.addEventListener('click',()=>{if(!menu.hidden){menu.hidden=true;button.setAttribute('aria-expanded','false')}});document.addEventListener('keydown',e=>{if(e.key==='Escape'){menu.hidden=true;button.setAttribute('aria-expanded','false')}});document.body.append(button,menu)
