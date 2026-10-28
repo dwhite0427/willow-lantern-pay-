@@ -40,9 +40,8 @@ function cleanDashboardHeader(){
 
 function removeExtraExplanatoryText(){
   const dashboard=document.querySelector('#dashboard')
-  if(!dashboard)return
-  dashboard.querySelectorAll('.section-note').forEach(el=>el.remove())
-  dashboard.querySelectorAll('article.card > p').forEach(el=>el.remove())
+  if(dashboard){dashboard.querySelectorAll('.section-note').forEach(el=>el.remove());dashboard.querySelectorAll('article.card > p').forEach(el=>el.remove())}
+  document.querySelectorAll('main > .notice').forEach(el=>el.remove())
 }
 
 function mountDashboardMenu(){
