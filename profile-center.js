@@ -1,15 +1,13 @@
-function syncSubscription(){
+function syncSubscription(detail){
   const status=document.querySelector('#profile-subscription-status')
   const billing=document.querySelector('#profile-subscription-renewal')
   const action=document.querySelector('#profile-subscription-action')
-  const premiumButton=document.querySelector('#premium-upgrade')
-  const premiumMessage=document.querySelector('#premium-message')
   if(!status||!action)return
-  const active=premiumButton?.disabled||/premium active/i.test(premiumButton?.textContent||'')
+  const active=detail?.active===true
   status.textContent=active?'Premium':'Free'
-  billing.textContent=active?(premiumMessage?.textContent?.trim()||'Active'):'—'
+  billing.textContent=active?(String(detail?.status||'Active').replace(/^./,c=>c.toUpperCase())):'—'
   action.textContent=active?'Premium Active':'Upgrade to Premium'
-  action.disabled=!!active
+  action.disabled=active
 }
 
 function syncAccount(){
@@ -45,7 +43,8 @@ function mountProfileCenter(){
   $('profile-subscription-action').onclick=()=>{const upgrade=document.querySelector('#premium-upgrade');if(upgrade&&!upgrade.disabled)upgrade.click()}
   $('profile-reset-password').onclick=()=>{const reset=document.querySelector('#show-reset');document.querySelector('#sign-out')?.click();setTimeout(()=>reset?.click(),250)}
   const style=document.createElement('style');style.id='profile-center-style';style.textContent=`#profile-preferences{display:grid;gap:18px;margin-top:24px}.profile-section{padding-top:20px;border-top:1px solid rgba(0,0,0,.1)}.profile-section h3{margin:0 0 12px}.profile-section label{display:grid;gap:7px;margin:12px 0;font-weight:700}.profile-section input[type=text],.profile-section input[type=tel],.profile-section select{width:100%;box-sizing:border-box;padding:11px 12px;border:1px solid rgba(0,0,0,.16);border-radius:10px;background:#fff;font:inherit}.profile-identity{display:flex;align-items:center;gap:14px;border-top:0;padding-top:0}.profile-avatar{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;background:#eef4ef;font-weight:850;font-size:1.15rem}.profile-identity h3{margin:0 0 4px}.profile-identity span,.profile-info-grid span,.profile-subscription-card span{font-size:.82rem;color:#66756c}.profile-info-grid{display:grid;grid-template-columns:1fr;gap:10px}.profile-info-grid>div,.profile-subscription-card{padding:14px;border:1px solid rgba(0,0,0,.1);border-radius:12px}.profile-info-grid strong,.profile-subscription-card strong{display:block;margin-top:5px;word-break:break-word}.profile-subscription-card{display:grid;grid-template-columns:1fr 1fr auto;align-items:center;gap:12px}.profile-check{grid-template-columns:auto 1fr!important;align-items:center;justify-content:start}.profile-check input{width:18px;height:18px;margin:0}.profile-save-section{display:flex;flex-wrap:wrap;align-items:center;gap:14px}.profile-action-grid{display:grid;grid-template-columns:1fr;gap:10px}@media(max-width:600px){.profile-action-grid,.profile-subscription-card{grid-template-columns:1fr}}`;if(!document.querySelector('#profile-center-style'))document.head.append(style)
-  syncAccount();syncSubscription();setTimeout(()=>{syncAccount();syncSubscription()},800)
-  const observer=new MutationObserver(()=>{syncAccount();syncSubscription()});const premium=document.querySelector('#premium-upgrade')?.parentElement;if(premium)observer.observe(premium,{subtree:true,childList:true,characterData:true,attributes:true})
+  syncAccount();syncSubscription({active:false})
+  window.addEventListener('willow-premium-resolved',event=>syncSubscription(event.detail))
+  setTimeout(syncAccount,800)
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mountProfileCenter,{once:true});else mountProfileCenter()
