@@ -1,6 +1,5 @@
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.102.0'
+import { supabase,getCurrentUser } from './auth-stability.js'
 
-const supabase=createClient('https://vrgimzvmdwwrstonrbcf.supabase.co','sb_publishable_8ex4YVbGREfk93IGLBMG-g_hyZZRmLl',{auth:{autoRefreshToken:true,persistSession:true,detectSessionInUrl:true}})
 const money=c=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format((Number(c)||0)/100)
 let channel=null
 
@@ -13,16 +12,14 @@ function render(entries=[]){
 }
 
 async function load(){
- const {data:{user}}=await supabase.auth.getUser();if(!user){render([]);return}
+ const user=await getCurrentUser();if(!user){render([]);return}
  const {data,error}=await supabase.from('entries').select('kind,amount_cents').eq('user_id',user.id)
  if(!error)render(data||[])
  if(channel)await supabase.removeChannel(channel)
  channel=supabase.channel(`overview-balance-${user.id}`).on('postgres_changes',{event:'*',schema:'public',table:'entries',filter:`user_id=eq.${user.id}`},()=>load()).subscribe()
 }
 
-function removeLegacyOverviewFeatures(){
- document.querySelectorAll('[data-overview-feature],.overview-feature-card').forEach(el=>el.remove())
-}
+function removeLegacyOverviewFeatures(){document.querySelectorAll('[data-overview-feature],.overview-feature-card').forEach(el=>el.remove())}
 
 function mountDashboardHome(){
  const dashboard=document.querySelector('#dashboard');if(!dashboard)return
@@ -35,5 +32,5 @@ function mountDashboardHome(){
  load()
 }
 
-supabase.auth.onAuthStateChange(()=>setTimeout(load,0))
+window.addEventListener('willow-auth-resolved',()=>load())
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mountDashboardHome,{once:true});else mountDashboardHome()
