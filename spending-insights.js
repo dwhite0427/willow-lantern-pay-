@@ -15,6 +15,6 @@ export function renderSpendingInsights(entries=[]){
 
 export function mountSpendingInsights(){
  const dashboard=document.querySelector('#dashboard');if(!dashboard||document.querySelector('#spending-insights-card'))return
- const card=document.createElement('article');card.id='spending-insights-card';card.className='card';card.innerHTML='<span class="eyebrow">Spending</span><h2>Spending Breakdown</h2><p class="section-note">See where your recorded expenses are going this month.</p><div id="spending-insights-items" class="items"><div class="item">Add expense records to see your monthly spending breakdown.</div></div>'
+ const card=document.createElement('article');card.id='spending-insights-card';card.className='card';card.innerHTML='<h2>Spending Breakdown</h2><div id="spending-insights-items" class="items"><div class="item">Add expense records to see your monthly spending breakdown.</div></div>'
  const coach=document.querySelector('#financial-coach-card');if(coach)coach.insertAdjacentElement('afterend',card);else dashboard.append(card)
 }
