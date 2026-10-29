@@ -1,19 +1,18 @@
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.102.0'
-const supabase=createClient('https://vrgimzvmdwwrstonrbcf.supabase.co','sb_publishable_8ex4YVbGREfk93IGLBMG-g_hyZZRmLl',{auth:{autoRefreshToken:true,persistSession:true,detectSessionInUrl:true,lock:async(name,timeout,fn)=>fn()}})
+import { supabase, getSession } from './auth-stability.js'
 
 let currentUser=null
 const fmt=d=>d?new Date(d).toLocaleString():'—'
 
 async function refreshSecurity(){
- const {data}=await supabase.auth.getSession();currentUser=data.session?.user||null
+ const session=await getSession();currentUser=session?.user||null
  const user=currentUser
- const email=document.querySelector('#security-email'),status=document.querySelector('#security-email-status'),created=document.querySelector('#security-created'),last=document.querySelector('#security-last-signin'),provider=document.querySelector('#security-provider'),session=document.querySelector('#security-session-status')
+ const email=document.querySelector('#security-email'),status=document.querySelector('#security-email-status'),created=document.querySelector('#security-created'),last=document.querySelector('#security-last-signin'),provider=document.querySelector('#security-provider'),sessionStatus=document.querySelector('#security-session-status')
  if(email)email.textContent=user?.email||'—'
  if(status)status.textContent=user?.email_confirmed_at?'Verified':'Pending'
  if(created)created.textContent=fmt(user?.created_at)
  if(last)last.textContent=fmt(user?.last_sign_in_at)
  if(provider)provider.textContent=(user?.app_metadata?.provider||'email').replace(/^./,x=>x.toUpperCase())
- if(session)session.textContent=user?'Signed in':'Signed out'
+ if(sessionStatus)sessionStatus.textContent=user?'Signed in':'Signed out'
 }
 
 async function mountAccountSettings(){
@@ -26,6 +25,6 @@ async function mountAccountSettings(){
  document.querySelector('#security-reset-password').onclick=async()=>{const email=currentUser?.email;if(!email)return;const message=document.querySelector('#security-message');message.textContent='Sending…';const {error}=await supabase.auth.resetPasswordForEmail(email,{redirectTo:location.origin});message.textContent=error?'Unable to send reset email':'Password reset email sent'}
  document.querySelector('#security-refresh-session').onclick=async()=>{const message=document.querySelector('#security-message');message.textContent='Refreshing…';const {error}=await supabase.auth.refreshSession();await refreshSecurity();message.textContent=error?'Unable to refresh session':'Session refreshed'}
  document.querySelector('#security-signout').onclick=()=>document.querySelector('#sign-out')?.click()
- supabase.auth.onAuthStateChange(()=>setTimeout(refreshSecurity,0))
+ window.addEventListener('willow-auth-resolved',()=>refreshSecurity())
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mountAccountSettings,{once:true});else mountAccountSettings()
